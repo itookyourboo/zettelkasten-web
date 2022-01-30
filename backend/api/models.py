@@ -73,8 +73,8 @@ class Zettel(models.Model):
     content = models.CharField(max_length=2500)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    related = models.ManyToManyField("self", symmetrical=True)
-    tags = models.ManyToManyField(Tag)
+    related = models.ManyToManyField("self", symmetrical=True, blank=True)
+    tags = models.ManyToManyField(Tag, blank=True)
     kasten = models.ForeignKey(
         Kasten,
         on_delete=models.CASCADE,

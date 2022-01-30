@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
-from .models import User, Kasten
+from .models import User, Kasten, Zettel
+from action_serializer import ModelActionSerializer
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
@@ -76,9 +77,57 @@ class LoginSerializer(serializers.Serializer):
         }
 
 
-class KastenSerializer(serializers.ModelSerializer):
+class KastenShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Kasten
+        fields = ('id', 'title')
+
+
+class ZettelShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Zettel
+        fields = ('id', 'title')
+
+
+class KastenContentSerializer(serializers.ModelSerializer):
+    kastens = serializers.SerializerMethodField()
+    zettels = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Kasten
+        fields = ('id', 'title', 'kastens', 'zettels')
+
+    def get_kastens(self, obj):
+        kastens = obj.children_kastens
+        return KastenShortSerializer(kastens, many=True).data
+
+    def get_zettels(self, obj):
+        zettels = obj.children_zettels
+        return ZettelShortSerializer(zettels, many=True).data
+
+
+class KastenSerializer(ModelActionSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     class Meta:
         model = Kasten
         fields = '__all__'
+        action_fields = {
+            'list': {
+                'fields': ('id', 'title')
+            }
+        }
+
+
+class ZettelSerializer(ModelActionSerializer):
+    owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    kasten = serializers.PrimaryKeyRelatedField(queryset=Kasten.objects.all(), default=None)
+
+    class Meta:
+        model = Zettel
+        fields = '__all__'
+        action_fields = {
+            'list': {
+                'fields': ('id', 'title')
+            }
+        }
