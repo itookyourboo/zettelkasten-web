@@ -54,8 +54,18 @@ class Tag(models.Model):
 
 class Kasten(models.Model):
     title = models.CharField(max_length=200)
-    parent = models.ForeignKey("self", on_delete=models.CASCADE)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_root = models.BooleanField(default=False)
+    parent = models.ForeignKey(
+        "self",
+        on_delete=models.CASCADE,
+        related_name='children_kastens',
+        null=True
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='kastens'
+    )
 
 
 class Zettel(models.Model):
@@ -65,6 +75,14 @@ class Zettel(models.Model):
     updated = models.DateTimeField(auto_now=True)
     related = models.ManyToManyField("self", symmetrical=True)
     tags = models.ManyToManyField(Tag)
-    kasten = models.ForeignKey(Kasten, on_delete=models.CASCADE)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    kasten = models.ForeignKey(
+        Kasten,
+        on_delete=models.CASCADE,
+        related_name='children_zettels'
+    )
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='zettels'
+    )
 
