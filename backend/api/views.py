@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.exceptions import PermissionDenied
@@ -7,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .backends import JWTAuthentication
+from .middleware import has_permission
 from .models import Kasten, Zettel
 from .serializers import LoginSerializer, KastenSerializer, ZettelSerializer, KastenContentSerializer
 from .serializers import RegistrationSerializer
@@ -72,12 +72,9 @@ class KastenViewSet(viewsets.ModelViewSet):
         kastens = user.kastens.all()
         return kastens
 
+    @has_permission
     def retrieve(self, request, *args, **kwargs):
-        user = self.request.user
         kasten = self.get_object()
-        if user != kasten.owner:
-            raise PermissionDenied()
-
         serializer = KastenContentSerializer(kasten)
         return Response(serializer.data)
 
@@ -93,20 +90,12 @@ class KastenViewSet(viewsets.ModelViewSet):
         else:
             serializer.save(owner=self.request.user, is_root=False)
 
+    @has_permission
     def perform_update(self, serializer):
-        user = self.request.user
-        kasten = self.get_object()
-        if user != kasten.owner:
-            raise PermissionDenied()
-
         serializer.save()
 
+    @has_permission
     def perform_destroy(self, instance):
-        user = self.request.user
-        kasten = self.get_object()
-        if user != kasten.owner:
-            raise PermissionDenied()
-
         instance.delete()
 
 
@@ -116,38 +105,26 @@ class ZettelViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @has_permission
     def get_queryset(self):
-        user = self.request.user
         kasten = get_object_or_404(Kasten, pk=self.kwargs.get('kasten_id'))
-        if user != kasten.owner:
-            raise PermissionDenied()
-
         zettels = kasten.children_zettels.all()
         return zettels
 
+    @has_permission
     def perform_create(self, serializer):
         user = self.request.user
         kasten = get_object_or_404(Kasten, pk=self.kwargs.get('kasten_id'))
-        if user != kasten.owner:
-            raise PermissionDenied()
 
         serializer.save(
             owner=user,
             kasten=kasten
         )
 
+    @has_permission
     def perform_update(self, serializer):
-        user = self.request.user
-        kasten = get_object_or_404(Kasten, pk=self.kwargs.get('kasten_id'))
-        if user != kasten.owner:
-            raise PermissionDenied()
-
         serializer.save()
 
+    @has_permission
     def perform_destroy(self, instance):
-        user = self.request.user
-        kasten = get_object_or_404(Kasten, pk=self.kwargs.get('kasten_id'))
-        if user != kasten.owner:
-            raise PermissionDenied()
-
         instance.delete()
