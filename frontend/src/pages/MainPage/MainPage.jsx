@@ -1,29 +1,10 @@
-import {createResource, Suspense, For} from "solid-js";
-import {getZettelkastenList} from "../../api/zettelkasten";
-import Spinner from "../../components/Spinner";
-import Zettelkasten from "../../components/Zettelkasten";
-import {Col, Container, Modal, Row} from "solid-bootstrap";
-
+import {useNavigate} from "solid-app-router";
 
 function MainPage(props) {
-    const [zettelkastenList] = createResource(getZettelkastenList);
+    const navigate = useNavigate();
 
     return (
-        <Container>
-            {zettelkastenList.loading &&
-                <Row className="justify-content-center">
-                    <Spinner/>
-                </Row>
-            }
-            <Row className="justify-content-center">
-                <For each={zettelkastenList()}>{(zettelkasten, i) =>
-                    <Zettelkasten
-                        className="align-self-auto"
-                        {...zettelkasten}
-                    />
-                }</For>
-            </Row>
-        </Container>
+        <h1>Главная страница</h1>
     );
 }
 

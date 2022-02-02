@@ -19,12 +19,12 @@ function Header({title, children, ...rest}) {
                 <a
                     class="btn btn-outline-primary me-2"
                     role="button"
-                    href="/sign_in"
+                    href="/login"
                 >Sign in</a>
                 <a
                     class="btn btn-primary"
                     role="button"
-                    href="/sign_up"
+                    href="/register"
                 >Sign up</a>
             </div>
         </header>

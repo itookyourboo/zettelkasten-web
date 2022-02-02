@@ -1,51 +1,23 @@
 import BaseLayout from "./containers/BaseLayout/BaseLayout";
 import {lazy} from "solid-js";
-import {useRoutes, Router} from "solid-app-router";
+import {Routes, Router, Route} from "solid-app-router";
+import {AuthService, UserData} from "./services/AuthService";
 
-const routes = [
-    {
-        path: "/sign_in",
-        component: lazy(() => import("./pages/SignInPage"))
-    },
-    {
-        path: "/sign_up",
-        component: lazy(() => import("./pages/SignInPage"))
-    },
-    {
-        path: "/sign_out",
-        component: lazy(() => import("./pages/SignInPage"))
-    },
-    {
-        path: "/:id",
-        component: lazy(() => import("./pages/ZettelkastenPage"))
-    },
-    {
-        path: "/",
-        component: lazy(() => import("./pages/MainPage"))
-    }
-]
-
-const anon_routes = [
-    {
-        path: "/sign_in",
-        component: lazy(() => import("./pages/SignInPage")),
-    },
-    {
-        path: "/",
-        component: lazy(() => import("./pages/MainPage"))
-    }
-]
+const SignInPage = lazy(() => import("./pages/SignInPage"));
+const SignUpPage = lazy(() => import("./pages/SignUpPage"));
+const HomePage = lazy(() => import("./pages/HomePage"));
+const MainPage = lazy(() => import("./pages/MainPage"));
 
 function App() {
-
-
-    const Routes = useRoutes(routes);
-    const Anonymous = useRoutes()
     return (
         <Router>
             <BaseLayout>
-                <Routes/>
-                {/*<MainPage/>*/}
+                <Routes>
+                    <Route path="/register" element={<SignUpPage/>} />
+                    <Route path="/login" element={<SignInPage/>} />
+                    <Route path="/z" element={<MainPage/>}/>
+                    <Route path="/" element={<HomePage/>} />
+                </Routes>
             </BaseLayout>
         </Router>
     );
