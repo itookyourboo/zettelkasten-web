@@ -106,6 +106,12 @@ class KastenContentSerializer(serializers.ModelSerializer):
         return ZettelShortSerializer(zettels, many=True).data
 
 
+class KastenContentTreeSerializer(KastenContentSerializer):
+    def get_kastens(self, obj):
+        kastens = obj.children_kastens
+        return KastenContentTreeSerializer(kastens, many=True).data
+
+
 class KastenSerializer(ModelActionSerializer):
     owner = serializers.HiddenField(default=serializers.CurrentUserDefault())
 

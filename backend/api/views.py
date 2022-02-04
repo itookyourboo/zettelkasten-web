@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,7 +8,8 @@ from rest_framework.views import APIView
 from .backends import JWTAuthentication
 from .middleware import has_permission
 from .models import Kasten, Zettel
-from .serializers import LoginSerializer, KastenSerializer, ZettelSerializer, KastenContentSerializer
+from .serializers import LoginSerializer, KastenSerializer, ZettelSerializer, KastenContentSerializer, \
+    KastenContentTreeSerializer
 from .serializers import RegistrationSerializer
 
 
@@ -71,6 +72,14 @@ class KastenViewSet(viewsets.ModelViewSet):
         user = self.request.user
         kastens = user.kastens.all()
         return kastens
+
+    @action(detail=False, methods=['get'])
+    @has_permission
+    def load(self, request):
+        user = self.request.user
+        root = user.kastens.all().get(is_root=True)
+        serializer = KastenContentTreeSerializer(root)
+        return Response(serializer.data)
 
     @has_permission
     def retrieve(self, request, *args, **kwargs):
