@@ -1,13 +1,16 @@
-import TreeView from "../TreeView";
+import ZettelTreeView from "../ZettelTreeView";
 import Spinner from "../Spinner";
-import {Button} from "solid-bootstrap";
-import {createSignal} from "solid-js";
+import {Button, Col, Nav, Tab} from "solid-bootstrap";
+import {createSignal, Show} from "solid-js";
+import {BiSolidFolder} from "solid-icons/bi";
 
 
-const StaticSideBar = ({setActive}) => {
+const StaticSideBar = ({active, setActive}) => {
     return (
-        <div>
-            <Button onClick={() => setActive(v => !v)}>=</Button>
+        <div class="p-2 border-end">
+            <BiSolidFolder
+                size={24}
+                onClick={() => setActive(v => !v)}/>
         </div>
     )
 }
@@ -17,15 +20,12 @@ const ActiveSideBar = ({data}) => {
         <div style={{
             "min-width": "250px",
             "max-width": "250px",
-            "padding-left": "10px",
-        }} class="d-flex">
-            {
-                data.loading ? (
-                    <Spinner/>
-                ) : (
-                    <TreeView json={data()}/>
-                )
-            }
+        }} class="d-flex border-end">
+            <Show when={data()} fallback={
+                <Spinner/>
+            }>
+                <ZettelTreeView json={data()}/>
+            </Show>
         </div>
     )
 }
@@ -35,11 +35,12 @@ const ZettelkastenSideBar = ({defaultActive, data}) => {
 
     return (
         <nav class="d-flex" style={{
-            "height": "100%",
-            "border-right": "1px solid #dee2e6"
+            "height": "100%"
         }}>
-            <StaticSideBar setActive={setActive}/>
-            {active() && <ActiveSideBar data={data}/>}
+            <StaticSideBar active={active} setActive={setActive}/>
+            <Show when={active()}>
+                <ActiveSideBar data={data}/>
+            </Show>
         </nav>
     )
 }

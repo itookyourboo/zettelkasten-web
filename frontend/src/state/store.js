@@ -1,5 +1,4 @@
 import {createStore} from "solid-js/store";
-import {AuthService} from "../services/AuthService";
 
 const [store, setStore] = createStore({
     profile: {
@@ -8,8 +7,13 @@ const [store, setStore] = createStore({
         is_authenticated: !!localStorage.getItem('token')
     },
     content : {
-
+        currentZettel: {
+            selected: null,
+            data: null,
+            loading: false,
+            error: null
+        },
     }
-})
+});
 
 export {store, setStore};
