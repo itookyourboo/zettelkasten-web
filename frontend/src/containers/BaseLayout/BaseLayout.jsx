@@ -8,7 +8,7 @@ function BaseLayout(props) {
         <>
             <Header
                 title={"Zettelkasten"}/>
-            <main class="container-fluid flex-fill">
+            <main class="container-fluid flex-fill px-0">
                 {props.children}
             </main>
             <Footer

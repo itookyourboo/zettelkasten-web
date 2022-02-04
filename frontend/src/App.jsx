@@ -1,7 +1,6 @@
 import BaseLayout from "./containers/BaseLayout/BaseLayout";
 import {lazy} from "solid-js";
 import {Routes, Router, Route} from "solid-app-router";
-import {AuthService, UserData} from "./services/AuthService";
 
 const SignInPage = lazy(() => import("./pages/SignInPage"));
 const SignUpPage = lazy(() => import("./pages/SignUpPage"));

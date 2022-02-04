@@ -2,10 +2,12 @@ import {createStore} from "solid-js/store";
 import {Button, Form} from "solid-bootstrap";
 import {AuthService} from "../../services/AuthService";
 import Spinner from "../../components/Spinner";
+import {useNavigate} from "solid-app-router";
 
 
 function SignInPage() {
     let emailRef, passwordRef;
+    const navigate = useNavigate();
     const [request, setRequest] = createStore({
         loading: false, error: false, data: null,
     });
@@ -23,6 +25,8 @@ function SignInPage() {
                     loading: false,
                     error: false
                 });
+
+                navigate("/z/", { replace: true });
             })
             .catch(err => {
                 console.log("ERROR")
