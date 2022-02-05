@@ -1,13 +1,12 @@
-import {createSignal, For, Show} from 'solid-js'
+import {createResource, createSignal, For, Show} from 'solid-js'
 import ZettelItem from "../ZettelItem";
 import KastenItem from "../KastenItem";
 import {ListGroup} from "solid-bootstrap";
-import {ZettelService} from "../../services/ZettelService";
-import {setStore} from "../../state/store";
-import {produce} from "solid-js/store";
+import {useOnItemClick} from "../../state/OnItemClick";
 
 const SubTree = ({json, depth = 1}) => {
     const [expand, setExpand] = createSignal(false);
+    const onItemClick = useOnItemClick();
 
     return (
         <>
@@ -29,10 +28,7 @@ const SubTree = ({json, depth = 1}) => {
                         <ZettelItem
                             json={zettel}
                             depth={depth + 1}
-                            onClick={() => {
-                                zettel.kastenId = json.id;
-                                ZettelService.loadZettelDataToStore(zettel);
-                            }}/>
+                            onClick={() => onItemClick({...zettel, kastenId: json.id})}/>
                     )}
                 </For>
             </Show>
@@ -46,7 +42,7 @@ const ZettelTreeView = ({json}) => {
         <ListGroup style={{
             "width": "100%"
         }} variant="flush">
-            <SubTree json={json} />
+            <SubTree json={json}/>
         </ListGroup>
     )
 }

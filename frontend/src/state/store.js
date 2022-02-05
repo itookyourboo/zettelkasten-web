@@ -1,4 +1,5 @@
 import {createStore} from "solid-js/store";
+import {createResource} from "solid-js";
 
 const [store, setStore] = createStore({
     profile: {
@@ -7,12 +8,7 @@ const [store, setStore] = createStore({
         is_authenticated: !!localStorage.getItem('token')
     },
     content : {
-        currentZettel: {
-            selected: null,
-            data: null,
-            loading: false,
-            error: null
-        },
+        tabs: []
     }
 });
 
